@@ -28,16 +28,16 @@ module Rios
 
     def initialize
       @fd_master, @fd_slave = PTY.openpty
-      @get_filters = []
-      @post_filters = []
+      @input_filters = []
+      @output_filters = []
     end
 
-    def get(&block)
-      @get_filters.push(block)
+    def input(&block)
+      @input_filters.push(block)
     end
 
-    def post(&block)
-      @post_filters.push(block)
+    def output(&block)
+      @output_filters.push(block)
     end
 
     def make_raw(termios)
@@ -91,7 +91,7 @@ module Rios
 
       begin
         while s = $stdin.sysread(BUFSIZE) do
-          @get_filters.each { |filter| filter.call(s) }
+          @input_filters.each { |filter| filter.call(s) }
           terminal.master.syswrite(s)
         end
       rescue EOFError
@@ -107,7 +107,7 @@ module Rios
 
       begin
         while s = terminal.master.sysread(BUFSIZE) do
-          @post_filters.each { |filter| filter.call(s) }
+          @output_filters.each { |filter| filter.call(s) }
           $stdout.syswrite(s)
         end
       rescue
