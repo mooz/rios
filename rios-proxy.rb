@@ -24,6 +24,7 @@ module Rios
 
   class Proxy
     BUFSIZE = 128
+    DEFAULT_COMMAND = ENV["SHELL"]
 
     def initialize
       @fd_master, @fd_slave = PTY.openpty
@@ -69,7 +70,9 @@ module Rios
       Terminal.new(@fd_master, @fd_slave)
     end
 
-    def listen
+    def listen(command = nil)
+      @command = command || DEFAULT_COMMAND
+
       in_raw_mode do
         fork do
           fork do
@@ -120,7 +123,7 @@ module Rios
       $stderr.reopen(terminal.slave)
       terminal.slave.close
 
-      exec("/usr/bin/zsh")
+      exec(@command)
     end
   end
 end
