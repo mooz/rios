@@ -2,32 +2,51 @@
 
 require "rios-proxy"
 
-proxy = Rios::Proxy.new
+class Script
+  DEFAULT_SCRIPT = "typescript"
 
-file_path = "/tmp/script"
+  def initialize(path = DEFAULT_SCRIPT, options = {})
+    @proxy = Rios::Proxy.new
+    @file = open(path, options[:append] ? "a+" : "w+")
+    setup_listeners()
+  end
 
-file = open(file_path, "w")
+  def start()
+    puts start_message
+    @proxy.listen
+    puts finish_message
+  end
 
-puts <<EOS
+  private
+
+  def setup_listeners
+    @proxy.on_output { |s|
+      s.gsub!(/oo/, "**")
+      @file.syswrite(s)
+      s
+    }
+
+    @proxy.on_finish {
+      @file.close
+    }
+  end
+
+  def decorate_message(message)
+    <<EOS
 ============================================================
-Begin recording script into #{file_path}
+#{message}
 ============================================================
 EOS
+  end
 
-proxy.on_output do |s|
-  s = s.gsub(/a/, "!")
-  file.write(s)
-  s
+  def start_message()
+    decorate_message("Script started, file is #{@file.path}")
+  end
+
+  def finish_message()
+    decorate_message("Script finished, file is #{@file.path}")
+  end
 end
 
-proxy.on_finish do ||
-  file.close
-
-  puts <<EOS
-============================================================
-Recorded script into #{file_path}
-============================================================
-EOS
-end
-
-proxy.listen
+script = Script.new()
+script.start
