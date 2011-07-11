@@ -32,11 +32,11 @@ module Rios
       @output_filters = []
     end
 
-    def input(&block)
+    def on_input(&block)
       @input_filters.push(block)
     end
 
-    def output(&block)
+    def on_output(&block)
       @output_filters.push(block)
     end
 
