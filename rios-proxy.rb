@@ -124,6 +124,8 @@ module Rios
         end
       rescue
       end
+
+      terminal.master.close
     end
 
     def do_command(block)
