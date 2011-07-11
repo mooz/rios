@@ -20,6 +20,21 @@ module Rios
     def slave
       synced(@slave ||= IO.open(@fd_slave))
     end
+
+    class << self
+      def set_raw_mode(termios)
+        termios.c_iflag &= ~(Termios::IGNBRK | Termios::BRKINT |
+                             Termios::PARMRK | Termios::ISTRIP |
+                             Termios::INLCR  | Termios::IGNCR  |
+                             Termios::ICRNL  | Termios::IXON)
+        termios.c_oflag &= ~Termios::OPOST
+        termios.c_lflag &= ~(Termios::ECHO   | Termios::ECHONL |
+                             Termios::ICANON | Termios::ISIG   |
+                             Termios::IEXTEN)
+        termios.c_cflag &= ~(Termios::CSIZE  | Termios::PARENB)
+        termios.c_cflag |= Termios::CS8
+      end
+    end
   end
 
   class Proxy
@@ -48,39 +63,25 @@ module Rios
     def listen(command = nil, &block)
       @command = command || DEFAULT_COMMAND
 
-      in_raw_mode do
-        fork do
-          fork do
+      in_raw_mode {
+        fork {
+          fork {
             do_command(block)
-          end
-          do_output
-        end
-        Signal.trap(:CHLD) {
-          create_terminal.master.close
+          }
+          do_output()
         }
-        do_input
-      end
-    end
-
-    def make_raw(termios)
-      termios.c_iflag &= ~(Termios::IGNBRK | Termios::BRKINT |
-                           Termios::PARMRK | Termios::ISTRIP |
-                           Termios::INLCR  | Termios::IGNCR  |
-                           Termios::ICRNL  | Termios::IXON);
-      termios.c_lflag &= ~(Termios::ECHONL | Termios::ICANON |
-                           Termios::ISIG   | Termios::IEXTEN);
-      termios.c_cflag &= ~(Termios::CSIZE  | Termios::PARENB);
-      termios.c_cflag |= Termios::CS8;
-      termios.c_lflag &= ~Termios::ECHO;
-      # termios.c_oflag &= ~Termios::OPOST;
+        Signal.trap(:CHLD) { terminal.master.close() }
+        do_input()
+      }
     end
 
     def in_raw_mode
-      old_tt = Termios.tcgetattr($stdin)
+      old_tt = Termios::tcgetattr($stdin)
       raw_tt = old_tt.clone
 
       begin
-        make_raw(raw_tt)
+        Terminal::set_raw_mode(raw_tt)
+        raw_tt.c_lflag &= ~Termios::ECHO
         Termios.tcsetattr($stdin, Termios::TCSAFLUSH, raw_tt)
         yield
       ensure
@@ -92,9 +93,11 @@ module Rios
       Terminal.new(@fd_master, @fd_slave)
     end
 
-    def do_input
-      terminal = create_terminal
+    def terminal
+      @terminal || @terminal = create_terminal
+    end
 
+    def do_input
       terminal.slave.close
 
       begin
@@ -105,14 +108,10 @@ module Rios
       rescue
       end
 
-      @on_finishes.each { |block|
-        block.call
-      }
+      @on_finishes.each { |block| block.call }
     end
 
     def do_output
-      terminal = create_terminal
-
       $stdout.sync = true
       $stdin.close
       terminal.slave.close
@@ -132,8 +131,6 @@ module Rios
     end
 
     def do_command(block)
-      terminal = create_terminal
-
       terminal.master.close
       $stdin.reopen(terminal.slave)
       $stdout.reopen(terminal.slave)
@@ -142,7 +139,6 @@ module Rios
 
       if block
         block.call
-        exit!(true)
       else
         exec(@command)
       end
