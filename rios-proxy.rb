@@ -102,7 +102,7 @@ module Rios
           @input_filters.each { |filter| filter.call(s) }
           terminal.master.syswrite(s)
         end
-      rescue EOFError
+      rescue
       end
 
       @on_finishes.each { |block|
