@@ -30,6 +30,7 @@ module Rios
       @fd_master, @fd_slave = PTY.openpty
       @input_filters = []
       @output_filters = []
+      @on_finishes = []
     end
 
     def on_input(&block)
@@ -40,6 +41,9 @@ module Rios
       @output_filters.push(block)
     end
 
+    def on_finish(&block)
+      @on_finishes.push(block)
+    end
     def make_raw(termios)
       termios.c_iflag &= ~(Termios::IGNBRK | Termios::BRKINT |
                            Termios::PARMRK | Termios::ISTRIP |
@@ -96,6 +100,10 @@ module Rios
         end
       rescue EOFError
       end
+
+      @on_finishes.each { |block|
+        block.call
+      }
     end
 
     def do_output
