@@ -119,8 +119,11 @@ module Rios
 
       begin
         while s = terminal.master.sysread(BUFSIZE) do
-          @output_filters.each { |filter| filter.call(s) }
-          $stdout.syswrite(s)
+          filtered = @output_filters.reduce(s) { |acc, output_filter|
+            res = output_filter.call(acc)
+            res.nil? ? res : acc
+          }
+          $stdout.syswrite(filtered)
         end
       rescue
       end
