@@ -126,7 +126,7 @@ module Rios
       end
     end
 
-    def do_command
+    def do_command(block)
       terminal = create_terminal
 
       terminal.master.close
@@ -135,7 +135,12 @@ module Rios
       $stderr.reopen(terminal.slave)
       terminal.slave.close
 
-      exec(@command)
+      if block
+        block.call
+        exit!(true)
+      else
+        exec(@command)
+      end
     end
   end
 end
