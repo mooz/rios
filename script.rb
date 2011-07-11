@@ -7,7 +7,7 @@ class Script
 
   def initialize(path = DEFAULT_SCRIPT, options = {})
     @proxy = Rios::Proxy.new
-    @file = open(path, options[:append] ? "a+" : "w+")
+    @file = open(path, options[:append] ? "a" : "w")
     setup_listeners()
   end
 
