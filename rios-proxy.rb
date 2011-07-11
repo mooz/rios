@@ -44,6 +44,24 @@ module Rios
     def on_finish(&block)
       @on_finishes.push(block)
     end
+
+    def listen(command = nil, &block)
+      @command = command || DEFAULT_COMMAND
+
+      in_raw_mode do
+        fork do
+          fork do
+            do_command(block)
+          end
+          do_output
+        end
+        Signal.trap(:CHLD) {
+          create_terminal.master.close
+        }
+        do_input
+      end
+    end
+
     def make_raw(termios)
       termios.c_iflag &= ~(Termios::IGNBRK | Termios::BRKINT |
                            Termios::PARMRK | Termios::ISTRIP |
@@ -72,20 +90,6 @@ module Rios
 
     def create_terminal
       Terminal.new(@fd_master, @fd_slave)
-    end
-
-    def listen(command = nil)
-      @command = command || DEFAULT_COMMAND
-
-      in_raw_mode do
-        fork do
-          fork do
-            do_command
-          end
-          do_output
-        end
-        do_input
-      end
     end
 
     def do_input
