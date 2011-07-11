@@ -21,7 +21,6 @@ class Script
 
   def setup_listeners
     @proxy.on_output { |s|
-      s.gsub!(/oo/, "**")
       @file.syswrite(s)
       s
     }
