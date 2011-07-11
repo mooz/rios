@@ -27,7 +27,7 @@ module Rios
     DEFAULT_COMMAND = ENV["SHELL"]
 
     def initialize
-      @fd_master, @fd_slave = PTY.openpty
+      @fd_master, @fd_slave = PTY.openpty($stdin.fileno)
       @input_filters = []
       @output_filters = []
       @on_finishes = []
