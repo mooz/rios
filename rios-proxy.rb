@@ -41,16 +41,16 @@ module Rios
     end
 
     def make_raw(termios)
-      termios.c_iflag &= ~(Termios::IGNBRK | Termios::BRKINT | Termios::PARMRK |
-                           Termios::ISTRIP | Termios::INLCR | Termios::IGNCR |
-                           Termios::ICRNL | Termios::IXON);
-      # termios.c_oflag &= ~Termios::OPOST;
-      termios.c_lflag &= ~(Termios::ECHONL |
-                           Termios::ICANON |
-                           Termios::ISIG | Termios::IEXTEN);
-      termios.c_cflag &= ~(Termios::CSIZE | Termios::PARENB);
+      termios.c_iflag &= ~(Termios::IGNBRK | Termios::BRKINT |
+                           Termios::PARMRK | Termios::ISTRIP |
+                           Termios::INLCR  | Termios::IGNCR  |
+                           Termios::ICRNL  | Termios::IXON);
+      termios.c_lflag &= ~(Termios::ECHONL | Termios::ICANON |
+                           Termios::ISIG   | Termios::IEXTEN);
+      termios.c_cflag &= ~(Termios::CSIZE  | Termios::PARENB);
       termios.c_cflag |= Termios::CS8;
       termios.c_lflag &= ~Termios::ECHO;
+      # termios.c_oflag &= ~Termios::OPOST;
     end
 
     def in_raw_mode
