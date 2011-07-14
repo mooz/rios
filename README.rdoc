@@ -1,0 +1,33 @@
+= Rios - A proxy framework for command line interfaces
+
+== Description
+
+Rios is a proxy framework which works as a proxy for command line
+applications and allows developer to hook input/output of the
+applications in a blazingly simple way.
+
+== Installation
+
+  # gem install rios
+
+== Usage
+
+=== Shadow certain word
+
+  #!/usr/bin/env ruby
+  
+  require "rios/easy"
+  
+  on_output { |s|
+    s.gsub(/vim/i) { |match| "***" }
+  }
+  
+  listen
+
+== Author
+
+mooz <mailto:stillpedant@gmail.com>
+
+== License
+
+The MIT License.
