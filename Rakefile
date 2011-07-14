@@ -19,7 +19,7 @@ Jeweler::Tasks.new do |gem|
   gem.license     = "MIT"
   gem.email       = "stillpedant@gmail.com"
   gem.authors     = ["mooz"]
-  gem.summary     = %Q{An proxy framework for command line interfaces}
+  gem.summary     = %Q{A proxy framework for command line interfaces}
   gem.description = %Q{Rios is a proxy framework which works as a proxy
  for command line applications and allows developer to hook input/output
  of the applications in a blazingly simple way.}
