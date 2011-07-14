@@ -55,7 +55,7 @@ module Rios
           }
           do_output()
         }
-        Signal.trap(:CHLD) { terminal.master.close() }
+        Signal.trap(:CHLD) { terminal.master.close() } # TODO: Is this OK?
         do_input()
       }
     end
