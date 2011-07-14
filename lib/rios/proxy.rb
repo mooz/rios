@@ -25,6 +25,18 @@ module Rios
       @on_finishes.push(block)
     end
 
+    ##
+    # emulate user input
+    def input(string)
+      terminal.master.syswrite(string)
+    end
+
+    ##
+    # output string to the stdout (usually terminal)
+    def output(string)
+      $stdout.syswrite(string)
+    end
+
     def listen(command = nil, &block)
       @command = command || DEFAULT_COMMAND
 
@@ -37,6 +49,16 @@ module Rios
         }
         Signal.trap(:CHLD) { terminal.master.close() }
         do_input()
+      }
+    end
+
+    private
+
+    def apply_filters(s, filters)
+      filters.reduce(s) { |acc, filter|
+        res = filter.call(acc)
+        # when filter returens `nil', use previous value as output
+        res.nil? ? acc : res
       }
     end
 
@@ -67,8 +89,7 @@ module Rios
 
       begin
         while s = $stdin.sysread(BUFSIZE) do
-          @input_filters.each { |filter| filter.call(s) }
-          terminal.master.syswrite(s)
+          input(apply_filters(s, @input_filters))
         end
       rescue
       end
@@ -83,11 +104,7 @@ module Rios
 
       begin
         while s = terminal.master.sysread(BUFSIZE) do
-          filtered = @output_filters.reduce(s) { |acc, output_filter|
-            res = output_filter.call(acc)
-            res.nil? ? res : acc
-          }
-          $stdout.syswrite(filtered)
+          output(apply_filters(s, @output_filters))
         end
       rescue
       end
