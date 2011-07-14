@@ -1,8 +1,17 @@
 #!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
 
-require "rios-proxy"
+require "rios/proxy"
+
+module Color
+  def red(msg)
+    "\033[1;31m#{msg}\033[0m"
+  end
+end
 
 class Script
+  include Color
+
   DEFAULT_SCRIPT = "typescript"
 
   def initialize(path = DEFAULT_SCRIPT, options = {})
@@ -21,6 +30,7 @@ class Script
 
   def setup_listeners
     @proxy.on_output { |s|
+      s.gsub!(/@/) { |match| red(match[0]) }
       @file.syswrite(s)
       s
     }
