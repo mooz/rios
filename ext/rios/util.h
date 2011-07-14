@@ -1,5 +1,5 @@
 #include "ruby.h"
 
-void Init_openpty();
+void Init_util();
 VALUE method_openpty(VALUE self, VALUE fd);
 
