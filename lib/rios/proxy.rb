@@ -3,7 +3,7 @@ require "rios/terminal"
 
 module Rios
   class Proxy
-    BUFSIZE = 128
+    BUFSIZE = 1024
     DEFAULT_COMMAND = ENV["SHELL"]
 
     def initialize
