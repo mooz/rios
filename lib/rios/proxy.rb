@@ -13,14 +13,20 @@ module Rios
       @on_finishes    = []
     end
 
+    ##
+    # register handler which will be called when user inputs characters
     def on_input(&block)
       @input_filters.push(block)
     end
 
+    ##
+    # register handler which will be called when target program outputs characters
     def on_output(&block)
       @output_filters.push(block)
     end
 
+    ##
+    # register handler which will be called when target program exits
     def on_finish(&block)
       @on_finishes.push(block)
     end
@@ -37,6 +43,8 @@ module Rios
       $stdout.syswrite(string)
     end
 
+    ##
+    # begin proxy session
     def listen(command = nil, &block)
       @command = command || DEFAULT_COMMAND
 
