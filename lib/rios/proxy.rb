@@ -11,6 +11,7 @@ module Rios
       @input_filters  = []
       @output_filters = []
       @on_finishes    = []
+      @pty_lock       = Mutex.new
     end
 
     ##
@@ -34,13 +35,17 @@ module Rios
     ##
     # emulate user input
     def input(string)
-      terminal.master.syswrite(string)
+      @pty_lock.synchronize {
+        terminal.master.syswrite(string)
+      }
     end
 
     ##
     # output string to the stdout (usually terminal)
     def output(string)
-      $stdout.syswrite(string)
+      @pty_lock.synchronize {
+        $stdout.syswrite(string)
+      }
     end
 
     ##
