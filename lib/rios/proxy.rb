@@ -3,7 +3,6 @@ require "rios/terminal"
 
 module Rios
   class Proxy
-    BUFSIZE = 1024
     DEFAULT_COMMAND = ENV["SHELL"]
 
     def initialize
@@ -101,7 +100,7 @@ module Rios
       terminal.slave.close
 
       begin
-        while s = $stdin.sysread(BUFSIZE) do
+        while s = $stdin.sysread(Util::BUFSIZ) do
           input(apply_filters(s, @input_filters))
         end
       rescue
@@ -116,7 +115,7 @@ module Rios
       terminal.slave.close
 
       begin
-        while s = terminal.master.sysread(BUFSIZE) do
+        while s = terminal.master.sysread(Util::BUFSIZ) do
           output(apply_filters(s, @output_filters))
         end
       rescue

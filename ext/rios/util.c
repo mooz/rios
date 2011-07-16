@@ -7,9 +7,11 @@ VALUE Util = Qnil;
 void Init_util() {
     Rios = rb_define_module("Rios");
     Util = rb_define_module_under(Rios, "Util");
-    /* rb_define_method(Util, "openpty", method_openpty, 1); */
+
     rb_define_singleton_method(Util, "openpty", method_openpty, 1);
     rb_define_singleton_method(Util, "set_controlling_tty", method_set_controlling_tty, 2);
+
+    rb_define_const(Util, "BUFSIZ", INT2NUM(BUFSIZ));
 }
 
 /* Rios::Util::openpty */
