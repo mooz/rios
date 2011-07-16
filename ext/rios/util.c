@@ -9,6 +9,7 @@ void Init_util() {
     Util = rb_define_module_under(Rios, "Util");
     /* rb_define_method(Util, "openpty", method_openpty, 1); */
     rb_define_singleton_method(Util, "openpty", method_openpty, 1);
+    rb_define_singleton_method(Util, "set_controlling_tty", method_set_controlling_tty, 2);
 }
 
 /* Rios::Util::openpty */
@@ -25,4 +26,8 @@ VALUE method_openpty(VALUE self, VALUE fd) {
     openpty(&master, &slave, NULL, &tt, &win);
 
     return rb_ary_new3(2, INT2NUM(master), INT2NUM(slave));
+}
+
+VALUE method_set_controlling_tty(VALUE self, VALUE tty, VALUE source) {
+    return INT2NUM(ioctl(NUM2INT(tty), TIOCSCTTY, NUM2INT(source)));
 }

@@ -126,6 +126,9 @@ module Rios
     end
 
     def do_command(block)
+      Process.setsid()
+      Util::set_controlling_tty(terminal.slave.fileno, $stdin.fileno)
+
       terminal.master.close
       $stdin.reopen(terminal.slave)
       $stdout.reopen(terminal.slave)
