@@ -134,6 +134,8 @@ module Rios
 
       if block
         block.call
+      elsif @command.class == Array
+        exec(*@command)
       else
         exec(@command)
       end
