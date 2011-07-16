@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rios}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mooz"]
-  s.date = %q{2011-07-15}
+  s.date = %q{2011-07-16}
   s.default_executable = %q{script.rb}
   s.description = %q{Rios is a proxy framework which works as a proxy
  for command line applications and allows developer to hook input/output
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   ]
   s.files = [
     "Gemfile",
+    "README.rdoc",
     "Rakefile",
     "VERSION",
     "bin/script.rb",
@@ -30,6 +31,7 @@ Gem::Specification.new do |s|
     "ext/rios/util.c",
     "ext/rios/util.h",
     "lib/rios.rb",
+    "lib/rios/easy.rb",
     "lib/rios/proxy.rb",
     "lib/rios/terminal.rb",
     "rios.gemspec"
