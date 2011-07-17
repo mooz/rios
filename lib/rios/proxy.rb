@@ -37,6 +37,7 @@ module Rios
       @pty_lock.synchronize {
         terminal.master.syswrite(string)
       }
+      nil
     end
 
     ##
@@ -45,6 +46,7 @@ module Rios
       @pty_lock.synchronize {
         $stdout.syswrite(string)
       }
+      nil
     end
 
     ##
