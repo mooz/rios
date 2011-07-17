@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rios}
-  s.version = "0.2.0"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mooz"]
-  s.date = %q{2011-07-16}
+  s.date = %q{2011-07-17}
   s.default_executable = %q{script.rb}
   s.description = %q{Rios is a proxy framework which works as a proxy
  for command line applications and allows developer to hook input/output
