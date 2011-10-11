@@ -1,5 +1,6 @@
 #include "util.h"
-#include <pty.h>
+#include <termios.h>
+#include "pty.h"
 
 VALUE Rios = Qnil;
 VALUE Util = Qnil;
