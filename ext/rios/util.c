@@ -1,6 +1,6 @@
-#include "util.h"
 #include <termios.h>
-#include "pty.h"
+#include "rios/util.h"
+#include "rios/pty.h"
 
 VALUE Rios = Qnil;
 VALUE Util = Qnil;
